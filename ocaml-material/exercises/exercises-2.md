@@ -17,6 +17,8 @@ the produced output is
 1 2 1
 1 3 3 1
 ```
+C(n,k) = C(n-1,k) + C(n-1,k-1)
+C(n,1) = 1 = C(n,n)
 
 ### Exercise 3
 

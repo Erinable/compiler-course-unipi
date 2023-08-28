@@ -6,6 +6,17 @@ The *series expansion* of $e^x$ is given by:
 $$1 + x + \frac{x^2}{2!} + \frac{x^3}{3!} + \frac{x^4}{4!} + \dots$$
 
 Evaluate $e^x$ for given values of **x** by using the above expansion for the first 10 terms.
+$$
+\begin{aligned}
+e^x=&\lim_{n\rightarrow \infty}S(x,n)\\
+S(x,n)=&S(x,n-1)+f(x,n)\\
+f(x,n)=&{x\over n}f(x,n-1)\\
+S(x,1)=&S(x,0)+f(x,1)\\
+f(x,1)=&xf(x,0)\\
+S(x,0)=&1,
+f(x,0)=1
+\end{aligned}
+$$
 
 
 ## Exercise 2
