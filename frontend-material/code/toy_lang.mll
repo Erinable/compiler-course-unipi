@@ -59,8 +59,9 @@ rule toy_lang = parse
   | '*'
   | '/' as op           { printf "operator: %c\n" op;  OP op }
   | '{' [^ '\n']* '}' (* eat up one-line comments *)
-  | [' ' '\t' '\n']   (* eat up whitespace *)
+  | [' ' '\t']   (* eat up whitespace *)
                        { toy_lang lexbuf }
+  | '\n'               { Lexing.new_line lexbuf; toy_lang lexbuf}
   | _ as c             { printf "Unrecognized character: %c\n" c; CHAR c }
   | eof                { raise End_of_file }
 
