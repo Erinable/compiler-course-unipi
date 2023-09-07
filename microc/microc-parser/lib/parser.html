@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Grammar</title>
+    <style>
+      .specification td, th{
+          vertical-align: baseline;
+          padding: 0;
+          margin: 0;
+          font-weight: normal;
+      }
+      .specification td {
+          text-align: left;
+      }
+      .specification th {
+          text-align: right;
+          white-space: nowrap;
+      }
+      .specification th::after {
+          content: "\a0::=\a0";
+      }
+      .specification th.bar {
+          text-align: right;
+      }
+      .specification th.bar::after {
+          content: "|\a0";
+      }
+      .rule th, td {
+          padding-top: .5em;
+      }
+      .nonterminal::before {
+          content: "<";
+      }
+      .nonterminal::after {
+          content: ">";
+      }
+      .list::after {
+          content: "*";
+          vertical-align: super;
+          font-size: smaller;
+      }
+      .ne_list::after {
+          content: "+";
+          vertical-align: super;
+          font-size: smaller;
+      }
+      .option::before {
+          content: "[";
+      }
+      .option::after {
+          content: "]";
+      }
+    </style>
+  </head>
+  
+  <body>
+    
+    <table class="specification">
+      
+      <tr class="rule">
+        <th><span class="nonterminal">program</span></th>
+        <td><span class="list"><span class="nonterminal">topdecl</span></span>
+        EOF</td>
+      </tr>
+      
+      <tr class="rule">
+        <th><span class="nonterminal">topdecl</span></th>
+        <td><span class="nonterminal">vardecl_init_list</span></td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td><span class="nonterminal">fundecl</span></td>
+      </tr>
+      
+      <tr class="rule">
+        <th><span class="nonterminal">vardecl_init_list</span></th>
+        <td><span class="nonterminal">vardecl</span>
+        SEMICOLON</td>
+      </tr>
+      
+      <tr class="rule">
+        <th><span class="nonterminal">typ</span></th>
+        <td>INT_TYPE</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>STRING_TYPE</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>FLOAT_TYPE</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>BOOLEAN_TYPE</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>CHAR_TYPE</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>VOID</td>
+      </tr>
+      
+      <tr class="rule">
+        <th><span class="nonterminal">vardecl</span></th>
+        <td><span class="nonterminal">typ</span>
+        <span class="nonterminal">vardesc</span></td>
+      </tr>
+      
+      <tr class="rule">
+        <th><span class="nonterminal">vardesc</span></th>
+        <td>ID</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>TIMES
+        <span class="nonterminal">vardesc</span></td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>LPAREN
+        <span class="nonterminal">vardesc</span>
+        RPAREN</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td><span class="nonterminal">vardesc</span>
+        LBRACKET
+        RBRACKET</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td><span class="nonterminal">vardesc</span>
+        LBRACKET
+        INT
+        RBRACKET</td>
+      </tr>
+      
+      <tr class="rule">
+        <th><span class="nonterminal">fundecl</span></th>
+        <td><span class="nonterminal">typ</span>
+        ID
+        LPAREN
+        <span class="nonterminal">vardecl</span><sup>*</sup><sub>COMMA</sub>
+        RPAREN
+        <span class="nonterminal">block</span></td>
+      </tr>
+      
+      <tr class="rule">
+        <th><span class="nonterminal">block</span></th>
+        <td>LBRACE
+        <span class="list"><span class="nonterminal">stmtordec</span></span>
+        RBRACE</td>
+      </tr>
+      
+      <tr class="rule">
+        <th><span class="nonterminal">stmtordec</span></th>
+        <td><span class="nonterminal">stmt</span></td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td><span class="nonterminal">vardecl_init_list</span></td>
+      </tr>
+      
+      <tr class="rule">
+        <th><span class="nonterminal">stmt</span></th>
+        <td>RETURN
+        <span class="option"><span class="nonterminal">expr</span></span>
+        SEMICOLON</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td><span class="option"><span class="nonterminal">expr</span></span>
+        SEMICOLON</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td><span class="nonterminal">block</span></td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>WHILE
+        LBRACE
+        <span class="nonterminal">expr</span>
+        RBRACE
+        <span class="nonterminal">stmt</span></td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>DO
+        <span class="nonterminal">stmt</span>
+        WHILE
+        LBRACE
+        <span class="nonterminal">expr</span>
+        RBRACE
+        SEMICOLON</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>FOR
+        LBRACE
+        <span class="option"><span class="nonterminal">expr</span></span>
+        SEMICOLON
+        <span class="option"><span class="nonterminal">expr</span></span>
+        SEMICOLON
+        <span class="option"><span class="nonterminal">expr</span></span>
+        RBRACE
+        <span class="nonterminal">stmt</span></td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>IF
+        LBRACE
+        <span class="nonterminal">expr</span>
+        RBRACE
+        <span class="nonterminal">stmt</span>
+        ELSE
+        <span class="nonterminal">stmt</span></td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>IF
+        LBRACE
+        <span class="nonterminal">expr</span>
+        RBRACE
+        <span class="nonterminal">stmt</span></td>
+      </tr>
+      
+      <tr class="rule">
+        <th><span class="nonterminal">expr</span></th>
+        <td><span class="nonterminal">rexpr</span></td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td><span class="nonterminal">lexpr_access</span></td>
+      </tr>
+      
+      <tr class="rule">
+        <th><span class="nonterminal">lexpr_access</span></th>
+        <td><span class="nonterminal">lexpr</span></td>
+      </tr>
+      
+      <tr class="rule">
+        <th><span class="nonterminal">aexpr</span></th>
+        <td>INT</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>CHAR</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>TRUE</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>FALSE</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>FLOAT</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>STRING</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>NULL</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>LBRACE
+        <span class="nonterminal">rexpr</span>
+        RBRACE</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>ADDRESS
+        <span class="nonterminal">lexpr</span></td>
+      </tr>
+      
+      <tr class="rule">
+        <th><span class="nonterminal">lexpr</span></th>
+        <td>ID</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>TIMES
+        <span class="nonterminal">lexpr_access</span></td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>TIMES
+        <span class="nonterminal">aexpr</span></td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td><span class="nonterminal">lexpr</span>
+        LBRACKET
+        <span class="nonterminal">expr</span>
+        RBRACKET</td>
+      </tr>
+      
+      <tr class="rule">
+        <th><span class="nonterminal">rexpr</span></th>
+        <td><span class="nonterminal">aexpr</span></td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>ID
+        LBRACE
+        <span class="nonterminal">expr</span><sup>*</sup><sub>COMMA</sub>
+        RBRACE</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td><span class="nonterminal">lexpr</span>
+        ASSIGN
+        <span class="nonterminal">expr</span></td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td><span class="nonterminal">uop</span>
+        <span class="nonterminal">expr</span></td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td><span class="nonterminal">expr</span>
+        <span class="nonterminal">binop</span>
+        <span class="nonterminal">expr</span></td>
+      </tr>
+      
+      <tr class="rule">
+        <th><span class="nonterminal">binop</span></th>
+        <td>PLUS</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>MINUS</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>TIMES</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>MOD</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>DIV</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>AND</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>OR</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>GREATER</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>LESS</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>GEQ</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>LEQ</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>EQUAL</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>NEQ</td>
+      </tr>
+      
+      <tr class="rule">
+        <th><span class="nonterminal">uop</span></th>
+        <td>NOT</td>
+      </tr>
+      <tr>
+        <th class="bar"></th>
+        <td>MINUS</td>
+      </tr>
+      
+      
+    </table>
+    
+  </body>
+  
+</html>
