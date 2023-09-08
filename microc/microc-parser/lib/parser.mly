@@ -110,8 +110,23 @@ vardesc:
   | v=vardesc LBRACKET RBRACKET {v @ [Ast.TypID1("a")]}
   | v=vardesc LBRACKET i=INT RBRACKET {v @ [Ast.TypID1(string_of_int i)]}
 ;
+fundesc:
+  | i=ID {[Ast.TypID2(i)]}
+  | TIMES v=fundesc {Ast.TypID1("*")::v}
+  | LBRACKET RBRACKET v=fundesc {[Ast.TypID1("a")] @ v}
+  | LBRACKET i=INT RBRACKET v=fundesc {[Ast.TypID1(string_of_int i)] @ v}
+;
 fundecl:
-  | t=typ id=ID LPAREN v=separated_list(COMMA,vardecl) RPAREN b=block { {typ=t;fname=id;formals=v;body=b} }
+  | t=typ f=fundesc LPAREN v=separated_list(COMMA,vardecl) RPAREN b=block
+    {
+      let
+        vl = ref "he"
+      in
+      let m =
+        Ast.generate_vardecl t f vl
+      in
+      {typ=(fst m);fname=(snd m);formals=v;body=b}
+    }
 ;
 block:
   | LBRACE s=list(stmtordec) RBRACE { Ast.Block(s) |@| $loc}
@@ -129,12 +144,12 @@ stmt:
         | Some(ex) -> Ast.Expr(ex) |@| $loc
     }
   | b=block  { b }
-  | WHILE LBRACE e=expr RBRACE s=stmt {Ast.While(e,s) |@| $loc}
-  | DO s=stmt WHILE LBRACE e=expr RBRACE SEMICOLON
+  | WHILE LPAREN e=expr RPAREN s=stmt {Ast.While(e,s) |@| $loc}
+  | DO s=stmt WHILE LPAREN e=expr RPAREN SEMICOLON
     {
       Ast.Block([Ast.Stmt(s) |@| $loc(s);Ast.Stmt(Ast.While(e,s) |@| $loc) |@| $loc]) |@| $loc
     }
-  | FOR LBRACE e1=option(expr) SEMICOLON option(expr) SEMICOLON e3=option(expr) RBRACE s=stmt
+  | FOR LPAREN e1=option(expr) SEMICOLON option(expr) SEMICOLON e3=option(expr) RPAREN s=stmt
     {
       let init_expr_stmt =
         let loc_e = ($startpos(e1),$endpos($4)) in
@@ -164,15 +179,15 @@ stmt:
       in
       for_as_while
     }
-  | IF LBRACE e=expr RBRACE s1=stmt ELSE s2=stmt
+  | IF LPAREN e=expr RPAREN s1=stmt ELSE s2=stmt
     {
       Ast.If(e,s1,s2) |@| $loc
     }
-  | IF LBRACE e=expr RBRACE s1=stmt %prec THEN
+  | IF LPAREN e=expr RPAREN s1=stmt %prec THEN
     {
       Ast.If(e,s1,Ast.Block([]) |@| ($endpos(s1),$endpos(s1))) |@| $loc
     }
-  /*| IF LBRACE e=expr RBRACE s=stmt {Ast.If(e,s,None)}*/
+  /*| IF LPAREN e=expr RPAREN s=stmt {Ast.If(e,s,None)}*/
 ;
 expr:
   | e=rexpr {e}
@@ -189,7 +204,7 @@ aexpr:
   | f=FLOAT {Ast.FLiteral(f) |@| $loc}
   | s=STRING {Ast.SLiteral(s) |@| $loc}
   | NULL {Ast.Null |@| $loc}
-  | LBRACE e=rexpr RBRACE {e}
+  | LPAREN e=rexpr RPAREN {e}
   | ADDRESS e=lexpr {Ast.Addr(e) |@| $loc}
 ;
 lexpr:
@@ -200,7 +215,7 @@ lexpr:
 ;
 rexpr:
   | e=aexpr {e}
-  | id=ID LBRACE s=separated_list(COMMA,expr) RBRACE { Ast.Call(id,s) |@| $loc }
+  | id=ID LPAREN s=separated_list(COMMA,expr) RPAREN { Ast.Call(id,s) |@| $loc }
   | e1=lexpr ASSIGN e2=expr { Ast.Assign(e1,e2) |@| $loc }
   | uop e=expr {Ast.UnaryOp($1,e) |@| $loc}
   | e1=expr b=binop e2=expr { Ast.BinaryOp(b,e1,e2) |@| $loc}
